@@ -1,0 +1,19 @@
+[package]
+name = "loe"
+version = "0.1.0"
+authors = ["Petr Nevyhoštěný <petr.nevyhosteny@gmail.com>"]
+description = "Yet another line ending (CRLF <-> LF) converter written in Rust."
+documentation = "https://docs.rs/loe/"
+readme = "README.md"
+keywords = ["crlf", "lf", "newline", "eol"]
+license = "MIT"
+repository = "https://github.com/pnevyk/loe"
+edition = "2018"
+
+[dependencies]
+clap = "2"
+yansi = "0.4"
+
+[[bin]]
+name = "loe"
+path = "src/bin/main.rs"
