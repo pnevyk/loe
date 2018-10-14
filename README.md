@@ -49,4 +49,4 @@ See [documentation](https://docs.rs/loe/) to know more!
 
 ## License
 
-Tipograph is licensed under [MIT](LICENSE). Feel free to use it, contribute or spread the word.
+loe is licensed under [MIT](LICENSE). Feel free to use it, contribute or spread the word.
