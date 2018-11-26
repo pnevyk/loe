@@ -1,8 +1,9 @@
 extern crate clap;
 extern crate loe;
 
+use std::env;
 use std::fmt;
-use std::fs::File;
+use std::fs::{self, File};
 use std::process;
 
 use clap::{App, Arg};
@@ -24,7 +25,7 @@ fn main() {
                 .short("o")
                 .long("output")
                 .value_name("FILE")
-                .help("Specifies a filename where the transformed file is written to.")
+                .help("Specifies a filepath where the transformed file is written to. If it is identical to the input filepath, the content is safely replaced (no data loss).")
                 .takes_value(true),
         ).arg(Arg::with_name("FILE").help("Input file.").required(true))
         .arg(
@@ -46,13 +47,26 @@ fn main() {
                 .default_value("lf"),
         ).get_matches();
 
-    let filepath = matches.value_of("FILE").unwrap();
-    let mut input = File::open(&filepath).unwrap_or_else(|err| print_error_and_exit(err));
-    let mut output = File::create(
-        &matches
-            .value_of("output")
-            .unwrap_or(format!("{}.out", filepath).as_str()),
-    ).unwrap_or_else(|err| print_error_and_exit(err));
+    let input_path = matches.value_of("FILE").unwrap();
+    let mut input = File::open(&input_path).unwrap_or_else(|err| print_error_and_exit(err));
+
+    let default_output = format!("{}.out", input_path);
+    let output_path_candidate = matches.value_of("output").unwrap_or(&default_output);
+
+    let mut tmp = env::temp_dir();
+    let (output_path, identical) = if output_path_candidate == input_path {
+        tmp.push(default_output);
+        (
+            tmp.as_path()
+                .to_str()
+                .unwrap_or_else(|| print_error_and_exit("Input filepath is not valid utf-8")),
+            true,
+        )
+    } else {
+        (output_path_candidate, false)
+    };
+
+    let mut output = File::create(&output_path).unwrap_or_else(|err| print_error_and_exit(err));
 
     let encoding = matches
         .value_of("encoding")
@@ -60,7 +74,8 @@ fn main() {
             "utf8" => Encoding::Utf8,
             "ascii" => Encoding::Ascii,
             _ => unreachable!(),
-        }).unwrap_or(Encoding::Ignore);
+        })
+        .unwrap_or(Encoding::Ignore);
 
     let transform = matches
         .value_of("ending")
@@ -68,11 +83,18 @@ fn main() {
             "lf" => TransformMode::LF,
             "crlf" => TransformMode::CRLF,
             _ => unreachable!(),
-        }).unwrap();
+        })
+        .unwrap();
 
     process(
         &mut input,
         &mut output,
         Config::default().encoding(encoding).transform(transform),
-    ).unwrap_or_else(|err| print_error_and_exit(err));
+    )
+    .unwrap_or_else(|err| print_error_and_exit(err));
+
+    if identical {
+        fs::copy(output_path, input_path).unwrap_or_else(|err| print_error_and_exit(err));
+        fs::remove_file(output_path).unwrap_or_else(|err| print_error_and_exit(err));
+    }
 }
