@@ -1,6 +1,6 @@
 [package]
 name = "loe"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Petr Nevyhoštěný <petr.nevyhosteny@gmail.com>"]
 description = "Yet another line ending (CRLF <-> LF) converter written in Rust."
 documentation = "https://docs.rs/loe/"

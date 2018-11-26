@@ -17,7 +17,7 @@ fn print_error_and_exit<T: fmt::Display>(message: T) -> ! {
 
 fn main() {
     let matches = App::new("loe")
-        .version("0.1.0")
+        .version("0.2.0")
         .about("Changes line endings to LF or CRLF")
         .author("Petr Nevyhoštěný")
         .arg(
