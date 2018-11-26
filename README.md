@@ -60,9 +60,9 @@ imitate this behavior.
 
 * `loe -e ascii -o out.txt bench.txt` - 0.70s
 * `dos2unix -n bench.txt out.txt` - 2.43s (dos2unix / loe ~= 3.5x)
-* `loe -n crlf -o out.txt bench.txt` - 0.76s
+* `loe -e ascii -n crlf -o out.txt bench.txt` - 0.76s
 * `unix2dos -n bench.txt out.txt` - 2.87s (unix2dos / loe ~= 3.8x)
-* `loe -o bench.txt bench.txt` - 0.59s
+* `loe -e ascii -o bench.txt bench.txt` - 0.59s
 * `dos2unix bench.txt` - 2.39s (dos2unix / loe ~= 4.05x)
 * `tr -d '\r' < bench.txt > out.txt` - 0.12s (loe / tr ~= 5.8x)
 
