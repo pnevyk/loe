@@ -66,7 +66,7 @@ imitate this behavior.
 * `dos2unix bench.txt` - 2.39s (dos2unix / loe ~= 4.05x)
 * `tr -d '\r' < bench.txt > out.txt` - 0.12s (loe / tr ~= 5.8x)
 
-Bear in mind that dos2unix offers more features than low. On the other hand, implementing them in loe should not affect
+Bear in mind that dos2unix offers more features than loe. On the other hand, implementing them in loe should not affect
 the performance much.
 
 If you do not agree how the measurement was performed, please let me know.
