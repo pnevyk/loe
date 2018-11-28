@@ -161,9 +161,7 @@ where
     let mut read_buffer = [0; BUFFER_SIZE];
     let mut write_buffer = [0; 2 * BUFFER_SIZE];
 
-    let mut result = input.read(&mut read_buffer);
-
-    while let Ok(n) = result {
+    while let Ok(n) = input.read(&mut read_buffer) {
         if n == 0 {
             break;
         }
@@ -179,7 +177,6 @@ where
         output
             .write(&write_buffer[0..out_ptr])
             .map_err(|err| ParseError::IoError(err))?;
-        result = input.read(&mut read_buffer);
     }
 
     Ok(())

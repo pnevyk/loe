@@ -64,11 +64,10 @@ impl Transform for CRLF {
     fn transform_buffer(
         &mut self,
         in_ptr: usize,
-        out_ptr: usize,
+        mut out_ptr: usize,
         input: &[u8],
         output: &mut [u8],
     ) -> usize {
-        let mut out_ptr = out_ptr;
         if input[in_ptr] != CR_CHAR {
             if input[in_ptr] == LF_CHAR {
                 output[out_ptr] = CR_CHAR;
@@ -95,11 +94,10 @@ impl Transform for LF {
     fn transform_buffer(
         &mut self,
         in_ptr: usize,
-        out_ptr: usize,
+        mut out_ptr: usize,
         input: &[u8],
         output: &mut [u8],
     ) -> usize {
-        let mut out_ptr = out_ptr;
         if input[in_ptr] != CR_CHAR {
             output[out_ptr] = input[in_ptr];
             out_ptr += 1;
