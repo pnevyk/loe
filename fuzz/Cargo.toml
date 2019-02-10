@@ -1,0 +1,26 @@
+
+[package]
+name = "loe-fuzz"
+version = "0.0.1"
+authors = ["Automatically generated"]
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies.loe]
+path = ".."
+[dependencies.libfuzzer-sys]
+git = "https://github.com/rust-fuzz/libfuzzer-sys.git"
+
+# Prevent this from interfering with workspaces
+[workspace]
+members = ["."]
+
+[[bin]]
+name = "all"
+path = "fuzz_targets/all.rs"
+
+[[bin]]
+name = "utf8"
+path = "fuzz_targets/utf8.rs"
