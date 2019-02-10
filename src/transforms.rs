@@ -20,6 +20,7 @@ const LF_CHAR: u8 = 0x0a;
 const CR_CHAR: u8 = 0x0d;
 
 /// Enumeration of possible transforms.
+#[derive(Debug, Clone, Copy)]
 pub enum TransformMode {
     /// Windows line ending.
     CRLF,

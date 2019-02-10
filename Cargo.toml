@@ -14,6 +14,9 @@ edition = "2018"
 clap = "2"
 yansi = "0.4"
 
+[dev-dependencies]
+proptest = "0.8.7"
+
 [[bin]]
 name = "loe"
 path = "src/bin/main.rs"

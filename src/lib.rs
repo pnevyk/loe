@@ -185,7 +185,11 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use proptest::{prop_assert, proptest, proptest_helper};
     use std::io::Cursor;
+
+    const LF_BYTE: u8 = '\n' as u8;
+    const CR_BYTE: u8 = '\r' as u8;
 
     #[test]
     fn basic() {
@@ -198,5 +202,77 @@ mod tests {
         assert!(output.is_ok());
         let output = output.unwrap();
         assert_eq!(output, expected);
+    }
+
+    fn filter(iterator: impl Iterator<Item = u8>) -> Vec<u8> {
+        iterator
+            .filter(|b| b != &LF_BYTE && b != &CR_BYTE)
+            .collect()
+    }
+
+    proptest! {
+        #[test]
+        fn prop_lf(data in ".*") {
+            let mut input = Cursor::new(data);
+            let mut output = Cursor::new(Vec::<u8>::new());
+
+            process(&mut input, &mut output, Config::default().transform(TransformMode::LF)).unwrap();
+
+            let output = output.into_inner();
+
+            // no CR byte
+            prop_assert!(!output.iter().any(|b| b == &CR_BYTE), "no CR byte");
+        }
+
+        #[test]
+        fn prop_crlf(data in ".*") {
+            let mut input = Cursor::new(data);
+            let mut output = Cursor::new(Vec::<u8>::new());
+
+            process(&mut input, &mut output, Config::default().transform(TransformMode::CRLF)).unwrap();
+
+            let output = output.into_inner();
+
+            // no LF byte
+            prop_assert!(!output.iter().any(|b| b == &LF_BYTE), "no LF byte");
+        }
+
+        #[test]
+        fn prop_inverse(data in "[^\\r]*") {
+            let mut input = Cursor::new(data);
+            let mut output = Cursor::new(Vec::<u8>::new());
+            let mut output2 = Cursor::new(Vec::<u8>::new());
+
+            process(&mut input, &mut output, Config::default().transform(TransformMode::CRLF)).unwrap();
+
+            output.set_position(0);
+            process(&mut output, &mut output2, Config::default().transform(TransformMode::LF)).unwrap();
+
+            let input = input.into_inner().bytes().collect::<Vec<_>>();
+            let output = output2.into_inner();
+
+            prop_assert!(input == output, "CRLF to LF and back");
+        }
+
+
+        #[test]
+        fn prop_preserve_rest(data in ".*") {
+            let input_filtered = filter(data.bytes());
+
+            let mut input = Cursor::new(data);
+            let mut output = Cursor::new(Vec::<u8>::new());
+            let mut output2 = Cursor::new(Vec::<u8>::new());
+
+            process(&mut input, &mut output, Config::default().transform(TransformMode::LF)).unwrap();
+
+            input.set_position(0);
+            process(&mut input, &mut output2, Config::default().transform(TransformMode::CRLF)).unwrap();
+
+            let output_filtered = filter(output.into_inner().into_iter());
+            prop_assert!(input_filtered == output_filtered, "the rest is preserved (LF)");
+
+            let output_filtered = filter(output2.into_inner().into_iter());
+            prop_assert!(input_filtered == output_filtered, "the rest is preserved (CRLF)");
+        }
     }
 }
