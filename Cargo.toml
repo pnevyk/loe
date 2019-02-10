@@ -2,7 +2,7 @@
 name = "loe"
 version = "0.2.0"
 authors = ["Petr Nevyhoštěný <petr.nevyhosteny@gmail.com>"]
-description = "Yet another line ending (CRLF <-> LF) converter written in Rust."
+description = "Very fast and yet another line ending (CRLF <-> LF) converter written in Rust."
 documentation = "https://docs.rs/loe/"
 readme = "README.md"
 keywords = ["crlf", "lf", "newline", "eol"]
