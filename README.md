@@ -48,28 +48,39 @@ fn convert(input: String) -> String {
 
 See [documentation](https://docs.rs/loe/) to know more!
 
-## Some Benchmarks
+## Benchmarks
 
-The following measurement was performed very unprofessionaly but still it can reveal some information. Commands were
-spawned on a mediocre personal laptop on Arch linux (kernel 4.19.2) and in these versions: loe - 0.2.0,
-[dos2unix](http://dos2unix.sourceforge.net/) - 7.4.0. The file `bench.txt` was 117M file with ~160k lines with only
-ascii characters in it (but utf-8 does not change the results significantly).
+The benchmark was performed with [hyperfine](https://github.com/sharkdp/hyperfine) tool using `hyperfine '<command>'
+--prepare 'sync; echo 3 | sudo tee /proc/sys/vm/drop_caches'` command. As dos2unix checks if the file is binary by
+default, `-e ascii` is used for loe commands as it imitates this behavior in loe.
 
-The argument `-e ascii` is used becase dos2unix by default checks if the file is not binary. This argument sort of
-imitate this behavior.
+#### Hardware & software configuration
 
-* `loe -e ascii -o out.txt bench.txt` - 0.70s
-* `dos2unix -n bench.txt out.txt` - 2.43s (dos2unix / loe ~= 3.5x)
-* `loe -e ascii -n crlf -o out.txt bench.txt` - 0.76s
-* `unix2dos -n bench.txt out.txt` - 2.87s (unix2dos / loe ~= 3.8x)
-* `loe -e ascii -o bench.txt bench.txt` - 0.59s
-* `dos2unix bench.txt` - 2.39s (dos2unix / loe ~= 4.05x)
-* `tr -d '\r' < bench.txt > out.txt` - 0.12s (loe / tr ~= 5.8x)
+| Key | Value |
+|:---|:---|
+| File `bench.txt` | 144 MB, 200k lines, ascii only |
+| Processor | Intel(R) Core(TM) i5-4200M CPU @ 2.50GHz |
+| Disk | Samsung SSD 840 |
+| Kernel | 4.20.5-arch1-1-ARCH |
+| loe | 0.2.0 |
+| dos2unix | 7.4.0 |
+| hyperfine | 1.3.0 |
 
-Bear in mind that dos2unix offers more features than loe. On the other hand, implementing them in loe should not affect
-the performance much.
+#### Results
 
-If you do not agree how the measurement was performed, please let me know.
+| Command | Mean [ms] | Min…Max [ms] |
+|:---|---:|---:|
+| `loe -o out.txt bench.txt` | 1011.2 ± 59.9 | 968.5…1153.3 |
+| `loe -e ascii -o out.txt bench.txt` | 962.9 ± 14.2 | 950.3…996.6 |
+| `dos2unix -n bench.txt out.txt` | 1358.8 ± 94.1 | 1214.3…1502.9 |
+| `loe -e ascii -n crlf -o out.txt bench.txt` | 1105.6 ± 18.0 | 1077.4…1135.2 |
+| `unix2dos -n bench.txt out.txt` | 1763.6 ± 118.5 | 1636.4…1985.2 |
+| `loe -e ascii -o bench.txt bench.txt` | 1086.4 ± 20.3 | 1050.0…1129.2 |
+| `dos2unix bench.txt` | 1354.0 ± 81.1 | 1246.4…1484.0 |
+| `tr -d '\r' < bench.txt > out.txt` | 472.4 ± 4.3 | 466.8…478.9 |
+
+On average, loe is ~1.4 times faster than dos2unix. Bear in mind that dos2unix offers more features than loe. On the
+other hand, implementing them in loe should not affect the performance much.
 
 ## License
 
