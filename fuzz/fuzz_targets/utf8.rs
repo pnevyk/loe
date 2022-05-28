@@ -13,7 +13,7 @@ fuzz_target!(|data: &[u8]| {
         let mut input = Cursor::new(s);
         let mut output = Cursor::new(Vec::<u8>::new());
 
-        for trans in &[TransformMode::LF, TransformMode::CRLF] {
+        for trans in &[TransformMode::Lf, TransformMode::Crlf] {
             let config = Config::default().encoding(Encoding::Utf8).transform(*trans);
             process(&mut input, &mut output, config).unwrap();
         }

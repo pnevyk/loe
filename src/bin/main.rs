@@ -80,8 +80,8 @@ fn main() {
     let transform = matches
         .value_of("ending")
         .map(|e| match e {
-            "lf" => TransformMode::LF,
-            "crlf" => TransformMode::CRLF,
+            "lf" => TransformMode::Lf,
+            "crlf" => TransformMode::Crlf,
             _ => unreachable!(),
         })
         .unwrap();

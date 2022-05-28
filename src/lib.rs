@@ -20,7 +20,7 @@ const BUFFER_SIZE: usize = 4096;
 /// let expected = "hello\r\nworld!\r\n";
 /// let mut output = Cursor::new(Vec::new());
 ///
-/// process(&mut input, &mut output, Config::default().encoding(Encoding::Ascii).transform(TransformMode::CRLF));
+/// process(&mut input, &mut output, Config::default().encoding(Encoding::Ascii).transform(TransformMode::Crlf));
 /// let actual = String::from_utf8(output.into_inner()).unwrap();
 /// assert_eq!(actual, expected);
 /// ```
@@ -35,7 +35,7 @@ impl Config<Encoding, TransformMode> {
     pub fn new() -> Self {
         Config {
             encoding_checker: Encoding::Ignore,
-            transform_mode: TransformMode::LF,
+            transform_mode: TransformMode::Lf,
         }
     }
 }
@@ -224,7 +224,7 @@ mod tests {
             let mut input = Cursor::new(data);
             let mut output = Cursor::new(Vec::<u8>::new());
 
-            process(&mut input, &mut output, Config::default().transform(TransformMode::LF)).unwrap();
+            process(&mut input, &mut output, Config::default().transform(TransformMode::Lf)).unwrap();
 
             let output = output.into_inner();
 
@@ -237,7 +237,7 @@ mod tests {
             let mut input = Cursor::new(data);
             let mut output = Cursor::new(Vec::<u8>::new());
 
-            process(&mut input, &mut output, Config::default().transform(TransformMode::CRLF)).unwrap();
+            process(&mut input, &mut output, Config::default().transform(TransformMode::Crlf)).unwrap();
 
             let output = output.into_inner();
 
@@ -251,10 +251,10 @@ mod tests {
             let mut output = Cursor::new(Vec::<u8>::new());
             let mut output2 = Cursor::new(Vec::<u8>::new());
 
-            process(&mut input, &mut output, Config::default().transform(TransformMode::CRLF)).unwrap();
+            process(&mut input, &mut output, Config::default().transform(TransformMode::Crlf)).unwrap();
 
             output.set_position(0);
-            process(&mut output, &mut output2, Config::default().transform(TransformMode::LF)).unwrap();
+            process(&mut output, &mut output2, Config::default().transform(TransformMode::Lf)).unwrap();
 
             let input = input.into_inner().bytes().collect::<Vec<_>>();
             let output = output2.into_inner();
@@ -271,10 +271,10 @@ mod tests {
             let mut output = Cursor::new(Vec::<u8>::new());
             let mut output2 = Cursor::new(Vec::<u8>::new());
 
-            process(&mut input, &mut output, Config::default().transform(TransformMode::LF)).unwrap();
+            process(&mut input, &mut output, Config::default().transform(TransformMode::Lf)).unwrap();
 
             input.set_position(0);
-            process(&mut input, &mut output2, Config::default().transform(TransformMode::CRLF)).unwrap();
+            process(&mut input, &mut output2, Config::default().transform(TransformMode::Crlf)).unwrap();
 
             let output_filtered = filter(output.into_inner().into_iter());
             prop_assert!(input_filtered == output_filtered, "the rest is preserved (LF)");

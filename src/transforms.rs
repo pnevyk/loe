@@ -11,7 +11,7 @@
 //! let expected = "hello\r\nworld!\r\n";
 //! let mut output = Cursor::new(Vec::new());
 //!
-//! process(&mut input, &mut output, Config::default().transform(TransformMode::CRLF));
+//! process(&mut input, &mut output, Config::default().transform(TransformMode::Crlf));
 //! let actual = String::from_utf8(output.into_inner()).unwrap();
 //! assert_eq!(actual, expected);
 //! ```
@@ -23,16 +23,16 @@ const CR_CHAR: u8 = 0x0d;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum TransformMode {
     /// Windows line ending.
-    CRLF,
+    Crlf,
     /// Unix line ending.
-    LF,
+    Lf,
 }
 
 impl From<TransformMode> for Box<dyn Transform> {
     fn from(val: TransformMode) -> Self {
         match val {
-            TransformMode::CRLF => Box::new(CRLF::new()),
-            TransformMode::LF => Box::new(LF::new()),
+            TransformMode::Crlf => Box::new(Crlf::new()),
+            TransformMode::Lf => Box::new(Lf::new()),
         }
     }
 }
@@ -53,15 +53,15 @@ pub trait Transform {
     ) -> usize;
 }
 
-struct CRLF;
+struct Crlf;
 
-impl CRLF {
+impl Crlf {
     fn new() -> Self {
-        CRLF
+        Crlf
     }
 }
 
-impl Transform for CRLF {
+impl Transform for Crlf {
     fn transform_buffer(
         &mut self,
         in_ptr: usize,
@@ -83,15 +83,15 @@ impl Transform for CRLF {
     }
 }
 
-struct LF;
+struct Lf;
 
-impl LF {
+impl Lf {
     fn new() -> Self {
-        LF
+        Lf
     }
 }
 
-impl Transform for LF {
+impl Transform for Lf {
     fn transform_buffer(
         &mut self,
         in_ptr: usize,
@@ -126,9 +126,9 @@ mod tests {
 
     #[test]
     fn crlf_basic() {
-        test(&mut CRLF::new(), b"Hello\nworld!\n", b"Hello\r\nworld!\r\n");
+        test(&mut Crlf::new(), b"Hello\nworld!\n", b"Hello\r\nworld!\r\n");
         test(
-            &mut CRLF::new(),
+            &mut Crlf::new(),
             b"Hello\r\nworld!\r\n",
             b"Hello\r\nworld!\r\n",
         );
@@ -136,7 +136,7 @@ mod tests {
 
     #[test]
     fn lf_basic() {
-        test(&mut LF::new(), b"Hello\r\nworld!\r\n", b"Hello\nworld!\n");
-        test(&mut LF::new(), b"Hello\nworld!\n", b"Hello\nworld!\n");
+        test(&mut Lf::new(), b"Hello\r\nworld!\r\n", b"Hello\nworld!\n");
+        test(&mut Lf::new(), b"Hello\nworld!\n", b"Hello\nworld!\n");
     }
 }
