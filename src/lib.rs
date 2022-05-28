@@ -87,9 +87,9 @@ impl RepresentsEncoding for Encoding {
 #[derive(Debug)]
 pub enum ParseError {
     /// The input is in invalid encoding. This enum variant also holds the name of expected
-    /// encodng.
+    /// encoding.
     InvalidEncoding(String),
-    /// An I/O error occured.
+    /// An I/O error occurred.
     IoError(io::Error),
 }
 
