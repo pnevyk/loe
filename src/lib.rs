@@ -68,21 +68,6 @@ impl Default for Config<Encoding, TransformMode> {
     }
 }
 
-/// Helper trait which just returns the name of the encoding. It is used in error reporting.
-pub trait RepresentsEncoding {
-    fn name(&self) -> &str;
-}
-
-impl RepresentsEncoding for Encoding {
-    fn name(&self) -> &str {
-        match *self {
-            Encoding::Utf8 => "UTF-8",
-            Encoding::Ascii => "Ascii",
-            Encoding::Ignore => "<none>",
-        }
-    }
-}
-
 /// Error which can occur during processing.
 #[derive(Debug)]
 pub enum ParseError {
@@ -159,10 +144,10 @@ pub fn process<I, O, E, T>(
 where
     I: Read,
     O: Write,
-    E: Into<Box<dyn EncodingChecker>> + RepresentsEncoding,
+    E: Into<Box<dyn EncodingChecker>> + fmt::Display,
     T: Into<Box<dyn Transform>>,
 {
-    let encoding_name = config.encoding_checker.name().to_string();
+    let encoding_name = format!("{}", config.encoding_checker);
     let mut encoding: Box<dyn EncodingChecker> = config.encoding_checker.into();
     let mut transform: Box<dyn Transform> = config.transform_mode.into();
 
