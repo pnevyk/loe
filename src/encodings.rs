@@ -16,8 +16,10 @@
 //! assert!(processed.is_err());
 //! ```
 
+use std::fmt;
+
 /// Enumeration of core-supported encodings.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Encoding {
     /// Special flag which disables any encoding checking on the input.
     Ignore,
@@ -34,6 +36,18 @@ impl Into<Box<dyn EncodingChecker>> for Encoding {
             Encoding::Ascii => Box::new(Ascii::new()),
             Encoding::Utf8 => Box::new(Utf8::new()),
         }
+    }
+}
+
+impl fmt::Display for Encoding {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let name = match self {
+            Encoding::Utf8 => "UTF-8",
+            Encoding::Ascii => "Ascii",
+            Encoding::Ignore => "<none>",
+        };
+
+        write!(f, "{}", name)
     }
 }
 

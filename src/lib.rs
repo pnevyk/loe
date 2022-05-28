@@ -24,6 +24,7 @@ const BUFFER_SIZE: usize = 4096;
 /// let actual = String::from_utf8(output.into_inner()).unwrap();
 /// assert_eq!(actual, expected);
 /// ```
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Config<E: Into<Box<dyn EncodingChecker>>, T: Into<Box<dyn Transform>>> {
     encoding_checker: E,
     transform_mode: T,
@@ -95,12 +96,19 @@ pub enum ParseError {
 impl fmt::Display for ParseError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            ParseError::InvalidEncoding(ref encoding) => write!(
-                f,
-                "The file is not in expected encoding which is {}",
-                encoding
-            ),
+            ParseError::InvalidEncoding(ref encoding) => {
+                write!(f, "file is not in expected encoding '{}'", encoding)
+            }
             ParseError::IoError(ref err) => write!(f, "{}", err),
+        }
+    }
+}
+
+impl std::error::Error for ParseError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            ParseError::InvalidEncoding(_) => None,
+            ParseError::IoError(error) => Some(error),
         }
     }
 }
