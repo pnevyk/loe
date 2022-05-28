@@ -25,7 +25,7 @@ In `Cargo.toml`
 
 ```toml
 [dependencies]
-loe = "0.2"
+loe = "0.3"
 ```
 
 In your source file:
