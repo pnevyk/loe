@@ -29,9 +29,9 @@ pub enum Encoding {
     Utf8,
 }
 
-impl Into<Box<dyn EncodingChecker>> for Encoding {
-    fn into(self) -> Box<dyn EncodingChecker> {
-        match self {
+impl From<Encoding> for Box<dyn EncodingChecker> {
+    fn from(val: Encoding) -> Self {
+        match val {
             Encoding::Ignore => Box::new(Ignore::new()),
             Encoding::Ascii => Box::new(Ascii::new()),
             Encoding::Utf8 => Box::new(Utf8::new()),

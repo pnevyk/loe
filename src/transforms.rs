@@ -28,9 +28,9 @@ pub enum TransformMode {
     LF,
 }
 
-impl Into<Box<dyn Transform>> for TransformMode {
-    fn into(self) -> Box<dyn Transform> {
-        match self {
+impl From<TransformMode> for Box<dyn Transform> {
+    fn from(val: TransformMode) -> Self {
+        match val {
             TransformMode::CRLF => Box::new(CRLF::new()),
             TransformMode::LF => Box::new(LF::new()),
         }

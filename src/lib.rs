@@ -184,7 +184,7 @@ where
 
         output
             .write(&write_buffer[0..out_ptr])
-            .map_err(|err| ParseError::IoError(err))?;
+            .map_err(ParseError::IoError)?;
     }
 
     Ok(())
@@ -196,8 +196,8 @@ mod tests {
     use proptest::{prop_assert, proptest, proptest_helper};
     use std::io::Cursor;
 
-    const LF_BYTE: u8 = '\n' as u8;
-    const CR_BYTE: u8 = '\r' as u8;
+    const LF_BYTE: u8 = b'\n';
+    const CR_BYTE: u8 = b'\r';
 
     #[test]
     fn basic() {
